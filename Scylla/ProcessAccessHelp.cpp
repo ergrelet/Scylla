@@ -178,6 +178,14 @@ bool ProcessAccessHelp::readMemoryPartlyFromProcess(DWORD_PTR address, SIZE_T si
 
 bool ProcessAccessHelp::writeMemoryToProcess(DWORD_PTR address, SIZE_T size, LPVOID dataBuffer)
 {
+#ifdef _WIN64
+#define bridge L"x64bridge.dll"
+#else
+#define bridge L"x32bridge.dll"
+#endif //_WIN64
+	static auto DbgMemWrite = (bool(__cdecl*)(DWORD_PTR, LPVOID, SIZE_T))GetProcAddress(GetModuleHandleW(bridge), "DbgMemWrite");
+	if(DbgMemWrite)
+		return DbgMemWrite(address, dataBuffer, size);
 	SIZE_T lpNumberOfBytesWritten = 0;
 	if (!hProcess)
 	{
@@ -193,6 +201,14 @@ bool ProcessAccessHelp::writeMemoryToProcess(DWORD_PTR address, SIZE_T size, LPV
 
 bool ProcessAccessHelp::readMemoryFromProcess(DWORD_PTR address, SIZE_T size, LPVOID dataBuffer)
 {
+#ifdef _WIN64
+#define bridge L"x64bridge.dll"
+#else
+#define bridge L"x32bridge.dll"
+#endif //_WIN64
+	static auto DbgMemRead = (bool(__cdecl*)(DWORD_PTR, LPVOID, SIZE_T))GetProcAddress(GetModuleHandleW(bridge), "DbgMemRead");
+	if(DbgMemRead)
+		return DbgMemRead(address, dataBuffer, size);
 	SIZE_T lpNumberOfBytesRead = 0;
 	DWORD dwProtect = 0;
 	bool returnValue = false;
