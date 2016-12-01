@@ -83,6 +83,7 @@ class ProcessAccessHelp
 public:
 
 	static HANDLE hProcess; //OpenProcess handle to target process
+	static DWORD dwProcessId; //GetProcessId(hProcess) == dwProcessId
 
 	static DWORD_PTR targetImageBase;
 	static DWORD_PTR targetSizeOfImage;
