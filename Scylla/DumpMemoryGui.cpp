@@ -286,6 +286,88 @@ void DumpMemoryGui::OnCancel(UINT uNotifyCode, int nID, CWindow wndCtl)
 {
 	EndDialog(0);
 }
+static bool showFileDialog(HWND hWnd, WCHAR * selectedFile, bool save, const WCHAR * defFileName, const WCHAR * filter, const WCHAR * defExtension, const WCHAR * directory)
+{
+	OPENFILENAME ofn = { 0 };
+
+	// WTL doesn't support new explorer styles on Vista and up
+	// This is because it uses a custom hook, we could remove it or derive
+	// from CFileDialog but this solution is easier and allows more control anyway (e.g. initial dir)
+
+	if(defFileName)
+	{
+		wcscpy_s(selectedFile, MAX_PATH, defFileName);
+	}
+	else
+	{
+		selectedFile[0] = L'\0';
+	}
+
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hWnd;
+	ofn.lpstrFilter = filter;
+	ofn.lpstrDefExt = defExtension; // only first 3 chars are used, no dots!
+	ofn.lpstrFile = selectedFile;
+	ofn.lpstrInitialDir = directory;
+	ofn.nMaxFile = MAX_PATH;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_HIDEREADONLY;
+
+	/*
+	*OFN_EXPLORER is automatically used, it only has to be specified
+	*if using a custom hook
+	*OFN_LONGNAMES is automatically used by explorer-style dialogs
+	*/
+
+	if(save)
+		ofn.Flags |= OFN_OVERWRITEPROMPT;
+	else
+		ofn.Flags |= OFN_FILEMUSTEXIST;
+
+	if(save)
+		return 0 != GetSaveFileName(&ofn);
+	else
+		return 0 != GetOpenFileName(&ofn);
+}
+void DumpMemoryGui::OnPE(UINT uNotifyCode, int nID, CWindow wndCtl)
+{
+	DWORD_PTR modBase = EditMemoryAddress.GetValue();
+	if(modBase == 0)
+	{
+		wndCtl.MessageBoxW(L"Textbox is empty!", L"Error", MB_ICONERROR);
+	}
+
+	WCHAR selectedFilePath[MAX_PATH] = { 0 };
+	WCHAR defaultFilename[MAX_PATH] = { 0 };
+	PeParser * peFile = 0;
+
+	wchar_t stringBuffer[600] = L"";
+
+	if(showFileDialog(m_hWnd, selectedFilePath, true, defaultFilename, L"Executable (*.exe)\0*.exe\0Dynamic Link Library (*.dll)\0*.dll\0All files\0*.*\0", NULL, stringBuffer))
+	{
+		bool end = false;
+		peFile = new PeParser(modBase, true);
+
+		if(peFile->isValidPeFile())
+		{
+			if(peFile->dumpProcess(modBase, peFile->getEntryPoint() + modBase, selectedFilePath))
+			{
+				end = true;
+			}
+			else
+			{
+				MessageBox(L"Cannot dump image.", L"Failure", MB_ICONERROR);
+			}
+		}
+		else
+		{
+			MessageBox(L"Invalid PE file or invalid PE header. Try reading PE header from disk/process.", L"Failure", MB_ICONERROR);
+		}
+
+		delete peFile;
+		if(end)
+			EndDialog(1);
+	}
+}
 
 void DumpMemoryGui::updateAddressAndSize( Memory * selectedMemory )
 {

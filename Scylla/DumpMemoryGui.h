@@ -50,6 +50,7 @@ public:
 
 		COMMAND_ID_HANDLER_EX(IDC_BTN_DUMPMEMORY_OK, OnOK)
 		COMMAND_ID_HANDLER_EX(IDC_BTN_DUMPMEMORY_CANCEL, OnCancel)
+		COMMAND_ID_HANDLER_EX(IDC_BTN_DUMPPE_OK, OnPE)
 		COMMAND_ID_HANDLER_EX(IDCANCEL, OnCancel)
 
 		CHAIN_MSG_MAP(CDialogResize<DumpMemoryGui>)
@@ -107,6 +108,7 @@ protected:
 	LRESULT OnListMemoryClick(NMHDR* pnmh);
 	void OnOK(UINT uNotifyCode, int nID, CWindow wndCtl);
 	void OnCancel(UINT uNotifyCode, int nID, CWindow wndCtl);
+	void OnPE(UINT uNotifyCode, int nID, CWindow wndCtl);
 
 	// GUI functions
 
