@@ -67,6 +67,22 @@ bool SystemInformation::getSystemInformation()
 	{
 		currenOS = WIN_8_32;
 	}
+	else if(isX64 && major == 6 && minor == 3)
+	{
+		currenOS = WIN_8_1_64;
+	}
+	else if(isX86 && major == 6 && minor == 3)
+	{
+		currenOS = WIN_8_1_32;
+	}
+	else if(isX64 && major == 10 && minor == 0)
+	{
+		currenOS = WIN_10_64;
+	}
+	else if(isX86 && major == 10 && minor == 0)
+	{
+		currenOS = WIN_10_32;
+	}
 	else
 	{
 		currenOS = UNKNOWN_OS;
