@@ -9,23 +9,23 @@ const WCHAR ConfigurationHolder::CONFIG_FILE_SECTION_NAME[] = L"SCYLLA_CONFIG";
 
 ConfigurationHolder::ConfigurationHolder(const WCHAR* fileName)
 {
-	config[USE_PE_HEADER_FROM_DISK]     = Configuration(L"USE_PE_HEADER_FROM_DISK",      Configuration::Boolean);
-	config[DEBUG_PRIVILEGE]             = Configuration(L"DEBUG_PRIVILEGE",              Configuration::Boolean);
-	config[CREATE_BACKUP]               = Configuration(L"CREATE_BACKUP",                Configuration::Boolean);
-	config[DLL_INJECTION_AUTO_UNLOAD]   = Configuration(L"DLL_INJECTION_AUTO_UNLOAD",    Configuration::Boolean);
-	config[UPDATE_HEADER_CHECKSUM]      = Configuration(L"UPDATE_HEADER_CHECKSUM",       Configuration::Boolean);
-	config[IAT_SECTION_NAME]            = Configuration(L"IAT_SECTION_NAME",             Configuration::String);
-	config[REMOVE_DOS_HEADER_STUB]      = Configuration(L"REMOVE_DOS_HEADER_STUB",       Configuration::Boolean);
-	config[IAT_FIX_AND_OEP_FIX]         = Configuration(L"IAT_FIX_AND_OEP_FIX",          Configuration::Boolean);
-	config[SUSPEND_PROCESS_FOR_DUMPING] = Configuration(L"SUSPEND_PROCESS_FOR_DUMPING",  Configuration::Boolean);
-	config[OriginalFirstThunk_SUPPORT]  = Configuration(L"OriginalFirstThunk_SUPPORT",	 Configuration::Boolean);
-	config[USE_ADVANCED_IAT_SEARCH]     = Configuration(L"USE_ADVANCED_IAT_SEARCH",	     Configuration::Boolean);
-	config[SCAN_DIRECT_IMPORTS]			= Configuration(L"SCAN_DIRECT_IMPORTS",			 Configuration::Boolean);
-	config[FIX_DIRECT_IMPORTS_NORMAL]			= Configuration(L"FIX_DIRECT_IMPORTS_NORMAL",			 Configuration::Boolean);
-	config[FIX_DIRECT_IMPORTS_UNIVERSAL]		= Configuration(L"FIX_DIRECT_IMPORTS_UNIVERSAL",			 Configuration::Boolean);
-    config[CREATE_NEW_IAT_IN_SECTION]	=   Configuration(L"CREATE_NEW_IAT_IN_SECTION",	 Configuration::Boolean);
-    config[DONT_CREATE_NEW_SECTION] 	=   Configuration(L"DONT_CREATE_NEW_SECTION",	 Configuration::Boolean);
-    config[APIS_ALWAYS_FROM_DISK]	    =   Configuration(L"APIS_ALWAYS_FROM_DISK",	     Configuration::Boolean);
+	(config[USE_PE_HEADER_FROM_DISK]     = Configuration(L"USE_PE_HEADER_FROM_DISK",      Configuration::Boolean)).setTrue();
+	(config[DEBUG_PRIVILEGE]             = Configuration(L"DEBUG_PRIVILEGE",              Configuration::Boolean)).setTrue();
+	(config[CREATE_BACKUP]               = Configuration(L"CREATE_BACKUP",                Configuration::Boolean)).setTrue();
+	(config[DLL_INJECTION_AUTO_UNLOAD]   = Configuration(L"DLL_INJECTION_AUTO_UNLOAD",    Configuration::Boolean)).setFalse();
+	(config[UPDATE_HEADER_CHECKSUM]      = Configuration(L"UPDATE_HEADER_CHECKSUM",       Configuration::Boolean)).setTrue();
+	(config[IAT_SECTION_NAME]            = Configuration(L"IAT_SECTION_NAME",             Configuration::String)).setString(L".SCY");
+	(config[REMOVE_DOS_HEADER_STUB]      = Configuration(L"REMOVE_DOS_HEADER_STUB",       Configuration::Boolean)).setFalse();
+	(config[IAT_FIX_AND_OEP_FIX]         = Configuration(L"IAT_FIX_AND_OEP_FIX",          Configuration::Boolean)).setTrue();
+	(config[SUSPEND_PROCESS_FOR_DUMPING] = Configuration(L"SUSPEND_PROCESS_FOR_DUMPING",  Configuration::Boolean)).setFalse();
+	(config[OriginalFirstThunk_SUPPORT]  = Configuration(L"OriginalFirstThunk_SUPPORT",	 Configuration::Boolean)).setTrue();
+	(config[USE_ADVANCED_IAT_SEARCH]     = Configuration(L"USE_ADVANCED_IAT_SEARCH",	     Configuration::Boolean)).setTrue();
+	(config[SCAN_DIRECT_IMPORTS]			= Configuration(L"SCAN_DIRECT_IMPORTS",			 Configuration::Boolean)).setTrue();
+	(config[FIX_DIRECT_IMPORTS_NORMAL]			= Configuration(L"FIX_DIRECT_IMPORTS_NORMAL",			 Configuration::Boolean)).setFalse();
+	(config[FIX_DIRECT_IMPORTS_UNIVERSAL]		= Configuration(L"FIX_DIRECT_IMPORTS_UNIVERSAL",			 Configuration::Boolean)).setTrue();
+    (config[CREATE_NEW_IAT_IN_SECTION]	=   Configuration(L"CREATE_NEW_IAT_IN_SECTION",	 Configuration::Boolean)).setFalse();
+    (config[DONT_CREATE_NEW_SECTION] 	=   Configuration(L"DONT_CREATE_NEW_SECTION",	 Configuration::Boolean)).setFalse();
+    (config[APIS_ALWAYS_FROM_DISK]	    =   Configuration(L"APIS_ALWAYS_FROM_DISK",	     Configuration::Boolean)).setFalse();
 	buildConfigFilePath(fileName);
 }
 
@@ -144,7 +144,7 @@ bool ConfigurationHolder::readStringFromConfigFile(Configuration & configObject)
 
 bool ConfigurationHolder::readBooleanFromConfigFile(Configuration & configObject)
 {
-	UINT val = GetPrivateProfileInt(CONFIG_FILE_SECTION_NAME, configObject.getName(), 0, configPath);
+	UINT val = GetPrivateProfileInt(CONFIG_FILE_SECTION_NAME, configObject.getName(), configObject.getBool(), configPath);
 	configObject.setBool(val != 0);
 	return true;
 }
