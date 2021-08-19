@@ -1,0 +1,9 @@
+[submodule "thirdparty/tinyxml"]
+	path = thirdparty/tinyxml
+	url = git@github.com:vmayoral/tinyxml.git
+[submodule "thirdparty/distorm"]
+	path = thirdparty/distorm
+	url = git@github.com:gdabah/distorm.git
+[submodule "thirdparty/WTL"]
+	path = thirdparty/WTL
+	url = git@github.com:Win32-WTL/WTL.git
