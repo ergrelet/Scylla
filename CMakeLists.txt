@@ -9,5 +9,5 @@ add_compile_definitions("UNICODE" "_UNICODE" "_SILENCE_STDEXT_HASH_DEPRECATION_W
 # Static linkage with MSVC's runtime
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-add_subdirectory("Scylla")
+add_subdirectory("src")
 add_subdirectory("thirdparty")
