@@ -3,6 +3,9 @@ file(GLOB DISTORM_SRC_FILES "distorm/src/*.h" "distorm/src/*.c")
 add_library(distorm STATIC ${DISTORM_SRC_FILES})
 target_include_directories(distorm PUBLIC "distorm/include")
 
+# pybind11
+add_subdirectory("pybind11")
+
 # tinyxml
 file(GLOB TINYXML_SRC_FILES "tinyxml/*.h" "tinyxml/*.cpp")
 add_library(tinyxml STATIC ${TINYXML_SRC_FILES})
