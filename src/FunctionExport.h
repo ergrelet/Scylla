@@ -39,16 +39,6 @@ DWORD WINAPI ScyllaVersionInformationDword();
 int WINAPI ScyllaStartGui(DWORD dwProcessId, HINSTANCE mod);
 
 int WINAPI ScyllaIatSearch(DWORD dwProcessId, DWORD_PTR * iatStart, DWORD * iatSize, DWORD_PTR searchStart, BOOL advancedSearch);
-int WINAPI ScyllaIatFixAutoW(DWORD_PTR iatAddr, DWORD iatSize, DWORD dwProcessId, const WCHAR * dumpFile, const WCHAR * iatFixFile);
-
-
-/*
-C/C++ Prototyps
-
-typedef const WCHAR * (WINAPI * def_ScyllaVersionInformationW)();
-typedef const char * (WINAPI * def_ScyllaVersionInformationA)();
-typedef DWORD (WINAPI * def_ScyllaVersionInformationDword)();
-typedef int (WINAPI * def_ScyllaIatSearch)(DWORD dwProcessId, DWORD_PTR * iatStart, DWORD * iatSize, DWORD_PTR searchStart, BOOL advancedSearch);
-typedef int (WINAPI * def_ScyllaStartGui)(DWORD dwProcessId, HINSTANCE mod);
-
-*/
+int WINAPI ScyllaIatFixAutoW(DWORD dwProcessId, DWORD_PTR iatAddr,
+                             DWORD iatSize, BOOL createNewIat,
+                             const WCHAR* dumpFile, const WCHAR* iatFixFile);
