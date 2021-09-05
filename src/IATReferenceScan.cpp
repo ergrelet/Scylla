@@ -384,7 +384,10 @@ void IATReferenceScan::patchNewIat(DWORD_PTR stdImagebase, DWORD_PTR newIatBaseA
 		DWORD_PTR newIatAddressPointer = (ref->targetPointer - IatAddressVA) + NewIatAddressRVA + stdImagebase;
 
 #ifdef _WIN64
-		patchBytes = (DWORD)(newIatAddressPointer - (ref->addressVA - ImageBase + stdImagebase) - 6);
+        patchBytes =
+            (DWORD)(newIatAddressPointer -
+                    (ref->addressVA - ImageBase + stdImagebase) -
+                    ref->instructionSize);
 #else
 		patchBytes = newIatAddressPointer;
 #endif
@@ -400,7 +403,16 @@ void IATReferenceScan::patchNewIat(DWORD_PTR stdImagebase, DWORD_PTR newIatBaseA
 		}
 		else
 		{
-			memory += patchOffset + 2;		
+#ifdef _WIN64
+			if (ref->instructionSize == 7) {
+				// REX prefix
+				memory += patchOffset + 3;
+			} else {
+				memory += patchOffset + 2;
+			}
+#else
+			memory += patchOffset + 2;
+#endif
 
 			*((DWORD *)memory) = patchBytes;
 		}
