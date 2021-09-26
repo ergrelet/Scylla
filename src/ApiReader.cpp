@@ -750,6 +750,12 @@ ApiInfo * ApiReader::getApiByVirtualAddress(DWORD_PTR virtualAddress, bool * isS
 
 		if (apiFound)
 			return apiFound;
+
+		// with a name, first wins
+		apiFound = getScoredApi(it1, countDuplicates, true, false, false, false, false, false, false, true);
+
+		if (apiFound)
+			return apiFound;
 	}
 
 	//is never reached
