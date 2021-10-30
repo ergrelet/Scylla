@@ -2,6 +2,7 @@
 
 #include "Scylla.h"
 #include "Architecture.h"
+#include "AppInfo.h"
 
 const WCHAR AboutGui::TEXT_VISIT[]          = L"Visit <a>German Reversing Newbies</a> and <a>Seek n Destroy</a>";
 const WCHAR AboutGui::TEXT_DEVELOPED[]      = L"Developed with Microsoft Visual Studio, written in pure C/C++";

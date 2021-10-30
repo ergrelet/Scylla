@@ -34,9 +34,6 @@ BOOL WINAPI ScyllaRebuildFileA(const char * fileToRebuild, BOOL removeDosStub, B
 
 const WCHAR * WINAPI ScyllaVersionInformationW();
 const char * WINAPI ScyllaVersionInformationA();
-DWORD WINAPI ScyllaVersionInformationDword();
-
-int WINAPI ScyllaStartGui(DWORD dwProcessId, HINSTANCE mod);
 
 int WINAPI ScyllaIatSearch(DWORD dwProcessId, DWORD_PTR * iatStart, DWORD * iatSize, DWORD_PTR searchStart, BOOL advancedSearch);
 int WINAPI ScyllaIatFixAutoW(DWORD dwProcessId, DWORD_PTR iatAddr,

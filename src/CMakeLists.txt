@@ -1,5 +1,6 @@
 set(SCYLLA_HEADER_FILES
     "AboutGui.h"
+    "AppInfo.h"
     "DeviceNameResolver.h "
     "DumpMemoryGui.h"
     "ImportRebuilder.h"
@@ -74,6 +75,10 @@ set(SCYLLA_SRC_FILES
 add_library(ScyllaLib STATIC ${SCYLLA_HEADER_FILES} ${SCYLLA_SRC_FILES})
 target_include_directories(ScyllaLib PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}")
 target_link_libraries(ScyllaLib PUBLIC distorm tinyxml WTL)
+target_compile_definitions(ScyllaLib PRIVATE
+    APPNAME_S="${CMAKE_PROJECT_NAME}"
+    APPVERSION_S="v${CMAKE_PROJECT_VERSION}"
+)
 
 # DLL
 add_library(Scylla MODULE

@@ -2,6 +2,7 @@
 
 #include <windows.h>
 
+#include "AppInfo.h"
 #include "ApiReader.h"
 #include "Architecture.h"
 #include "IATSearch.h"
@@ -20,8 +21,6 @@ const WCHAR* WINAPI ScyllaVersionInformationW() {
 const char* WINAPI ScyllaVersionInformationA() {
   return APPNAME_S " " ARCHITECTURE_S " " APPVERSION_S;
 }
-
-DWORD WINAPI ScyllaVersionInformationDword() { return APPVERSIONDWORD; }
 
 BOOL DumpProcessW(const WCHAR* fileToDump, DWORD_PTR imagebase,
                   DWORD_PTR entrypoint, const WCHAR* fileResult) {

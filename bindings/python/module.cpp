@@ -115,8 +115,6 @@ PYBIND11_MODULE(pyscylla, m) {
 // Wrapper for ScyllaVersionInformationW
 std::tuple<std::wstring, std::wstring> VersionInfo() {
   // The string's format is of the form "Scylla x64 v0.9.8"
-  constexpr size_t kSecondElemSize = sizeof("x86") - 1;
-  constexpr size_t kThirdElemSize = sizeof("vX.Y.Z") - 1;
   const std::wstring version_info = ScyllaVersionInformationW();
   // Split the string
   std::vector<size_t> space_offsets{};
@@ -125,15 +123,16 @@ std::tuple<std::wstring, std::wstring> VersionInfo() {
       space_offsets.push_back(i);
     }
   }
-  if (space_offsets.size() != 2 ||
-      version_info.length() < space_offsets[1] + kThirdElemSize) {
+  if (space_offsets.size() != 2) {
     // Shouldn't happen
     throw ScyllaException("Internal error");
   }
 
   return std::make_tuple(
-      version_info.substr(space_offsets[0] + 1, kSecondElemSize),
-      version_info.substr(space_offsets[1] + 1, kThirdElemSize));
+      version_info.substr(space_offsets[0] + 1,
+                          space_offsets[1] - space_offsets[0]),
+      version_info.substr(space_offsets[1] + 1,
+                          version_info.length() - 1 - space_offsets[1]));
 }
 
 // Wrapper for ScyllaIatSearch

@@ -1,13 +1,10 @@
 #include "MainGui.h"
 
 #include "Architecture.h"
-//#include "PluginLoader.h"
-//#include "ConfigurationHolder.h"
 #include "PeParser.h"
 #include "DllInjectionPlugin.h"
 #include "DisassemblerGui.h"
 #include "PickApiGui.h"
-//#include "NativeWinApi.h"
 #include "ImportRebuilder.h"
 #include "SystemInformation.h"
 #include "Scylla.h"
@@ -15,6 +12,7 @@
 #include "DonateGui.h"
 #include "OptionsGui.h"
 #include "TreeImportExport.h"
+#include "AppInfo.h"
 
 extern CAppModule _Module; // o_O
 
