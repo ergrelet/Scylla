@@ -124,7 +124,7 @@ class CMakeBuild(build_ext):
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="pyscylla",
-    version="1.0.0",
+    version="0.10.0",
     author="Erwan Grelet",
     description="Python bindings for Scylla",
     long_description="",

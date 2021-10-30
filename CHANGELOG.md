@@ -1,6 +1,19 @@
 Changelog
 ---------
 
+Version 0.10.0
+
+- Update default configuration
+- Add support for Windows 8.1 and Windows 10
+- Switch build system to CMake
+- Add bindings for Python 3
+- Add a new `createNewIat` parameter to `ScyllaIatFixAutoW`
+- Fix bad handling of instructions with a REX prefix in `IATReferenceScan::patchNewIat`
+- Handle multiple imports that have the same address in `ApiReader::getApiByVirtualAddress`
+- Add a Sphinx-generated documentation
+- Update distorm to version 3.5.2
+- Update WTL to version 10
+
 Version 0.9.8
 
 - Bugfixes for x64, IAT Search
