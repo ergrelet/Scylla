@@ -58,24 +58,45 @@ PYBIND11_MODULE(pyscylla, m) {
   m.doc() = "Python bindings for Scylla.";
 
   m.def("version_information", &VersionInfo, R"pbdoc(
-        Return Scylla's version as a tuple of `str`. The first item is "x86" or "x64" and the second item is "vX.Y.Z".
+		:return: Scylla's version as a `Tuple` of two `str`. The first item is
+				 either "x86" or "x64", the second item is the version of Scylla
+				 as an `str` of the form "vX.Y.Z"
     )pbdoc");
 
   m.def("search_iat", &IatSearch, R"pbdoc(
-        Try to find the PE's import address table in the given process's memory and return its address and size in case of success.
-    )pbdoc");
+		Try to find an import address table in the given process's address space.
+
+		:raises ScyllaException: Scylla failed to find an IAT
+		:return: A `Tuple` containing the address and the size of the IAT that's been found
+	)pbdoc",
+        py::arg("pid"), py::arg("search_start_address"),
+        py::arg("advanced_search"));
 
   m.def("dump_pe", &DumpPE, R"pbdoc(
-        Dump a PE loaded in the given process.
-    )pbdoc");
+		Dump a PE loaded in the given process.
+
+		:return: `True` if the function succeeded, `False` otherwise
+    )pbdoc",
+        py::arg("pid"), py::arg("image_base_address"),
+        py::arg("entrypoint_address"), py::arg("output_file_path"),
+        py::arg("input_file_path"));
 
   m.def("fix_iat", &IatFix, R"pbdoc(
-        Fix the import table of a PE previously dumped with Scylla.
-    )pbdoc");
+		Fix the import table of a PE previously dumped with Scylla.
+
+		:raises ScyllaException: Scylla failed to fix the IAT
+    )pbdoc",
+        py::arg("pid"), py::arg("iat_address"), py::arg("iat_size"),
+        py::arg("create_new_iat"), py::arg("input_file_path"),
+        py::arg("output_file_path"));
 
   m.def("rebuild_pe", &RebuildPE, R"pbdoc(
-        Apply minor fixes to a PE file.
-    )pbdoc");
+		Apply minor fixes to a PE file.
+
+		:return: `True` if the function succeeded, `False` otherwise
+    )pbdoc",
+        py::arg("input_file_path"), py::arg("remove_dos_stub"),
+        py::arg("fix_pe_checksum"), py::arg("create_backup"));
 
   // Register exception
   static auto scylla_exception =
