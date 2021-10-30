@@ -55,6 +55,8 @@ class ScyllaException : public std::exception {
 
 // Actual bindings
 PYBIND11_MODULE(pyscylla, m) {
+  m.doc() = "Python bindings for Scylla.";
+
   m.def("version_information", &VersionInfo, R"pbdoc(
         Return Scylla's version as a tuple of `str`. The first item is "x86" or "x64" and the second item is "vX.Y.Z".
     )pbdoc");
@@ -78,6 +80,9 @@ PYBIND11_MODULE(pyscylla, m) {
   // Register exception
   static auto scylla_exception =
       py::register_exception<ScyllaException>(m, "ScyllaException");
+  scylla_exception.doc() = R"pbdoc(
+        Exception type that maps errors reported by Scylla.
+    )pbdoc";
 
 #ifdef VERSION_INFO
   m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
