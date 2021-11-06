@@ -1,4 +1,7 @@
-//#include <vld.h> // Visual Leak Detector
+#pragma comment(linker, \
+                "\"/manifestdependency:type='win32' \
+name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 
 #include <atlbase.h>       // base ATL classes
 #include <atlapp.h>        // base WTL classes
@@ -21,7 +24,8 @@ int InitializeGui(HINSTANCE hInstance, LPARAM param);
 int APIENTRY _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpCmdLine, int nCmdShow)
 {
 	AddExceptionHandler();
-
+  
+	SetProcessDPIAware();
 	return InitializeGui(hInstance, (LPARAM)0);
 }
 
@@ -30,7 +34,6 @@ int InitializeGui(HINSTANCE hInstance, LPARAM param)
 	CoInitialize(NULL);
 
 	AtlInitCommonControls(ICC_LISTVIEW_CLASSES | ICC_TREEVIEW_CLASSES);
-
 	Scylla::initAsGuiApp();
 
 	IsDllMode = false;
@@ -44,7 +47,6 @@ int InitializeGui(HINSTANCE hInstance, LPARAM param)
 	// BLOCK: Run application
 	{
 		MainGui dlgMain;
-		pMainGui = &dlgMain; // o_O
 
 		CMessageLoop loop;
 		_Module.AddMessageLoop(&loop);

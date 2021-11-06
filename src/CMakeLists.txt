@@ -70,6 +70,10 @@ set(SCYLLA_SRC_FILES
     "SystemInformation.cpp"
     "TreeImportExport.cpp"
 )
+set(SCYLLA_RSRC_FILES
+    "resource.h"
+    "MainGui.rc"
+)
 
 # Static library
 add_library(ScyllaLib STATIC ${SCYLLA_HEADER_FILES} ${SCYLLA_SRC_FILES})
@@ -82,9 +86,15 @@ target_compile_definitions(ScyllaLib PRIVATE
 
 # DLL
 add_library(Scylla MODULE
+    ${SCYLLA_RSRC_FILES}
     "main.cpp"
     "scylla_export_functions.def"
-    "resource.h"
-    "MainGui.rc"
 )
 target_link_libraries(Scylla PRIVATE ScyllaLib)
+
+# Standalone executable
+add_executable(ScyllaExe WIN32
+    ${SCYLLA_RSRC_FILES}
+    "main.cpp"
+)
+target_link_libraries(ScyllaExe PRIVATE ScyllaLib)
