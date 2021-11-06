@@ -16,13 +16,8 @@ typedef struct _GUI_DLL_PARAMETER {
 	DWORD_PTR entrypoint;
 } GUI_DLL_PARAMETER, *PGUI_DLL_PARAMETER;
 
-int InitializeGui(HINSTANCE hInstance, LPARAM param);
-
 
 //function to export in DLL
-
-BOOL DumpProcessW(const WCHAR * fileToDump, DWORD_PTR imagebase, DWORD_PTR entrypoint, const WCHAR * fileResult);
-
 BOOL WINAPI ScyllaDumpCurrentProcessW(const WCHAR * fileToDump, DWORD_PTR imagebase, DWORD_PTR entrypoint, const WCHAR * fileResult);
 BOOL WINAPI ScyllaDumpCurrentProcessA(const char * fileToDump, DWORD_PTR imagebase, DWORD_PTR entrypoint, const char * fileResult);
 
@@ -34,6 +29,9 @@ BOOL WINAPI ScyllaRebuildFileA(const char * fileToRebuild, BOOL removeDosStub, B
 
 const WCHAR * WINAPI ScyllaVersionInformationW();
 const char * WINAPI ScyllaVersionInformationA();
+
+INT WINAPI ScyllaStartGui(DWORD dwProcessId, HINSTANCE mod,
+                          DWORD_PTR entrypoint);
 
 int WINAPI ScyllaIatSearch(DWORD dwProcessId, DWORD_PTR * iatStart, DWORD * iatSize, DWORD_PTR searchStart, BOOL advancedSearch);
 int WINAPI ScyllaIatFixAutoW(DWORD dwProcessId, DWORD_PTR iatAddr,

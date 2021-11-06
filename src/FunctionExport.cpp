@@ -2,8 +2,8 @@
 
 #include <windows.h>
 
-#include "AppInfo.h"
 #include "ApiReader.h"
+#include "AppInfo.h"
 #include "Architecture.h"
 #include "IATSearch.h"
 #include "ImportRebuilder.h"
@@ -13,6 +13,8 @@
 #include "Scylla.h"
 
 extern HINSTANCE hDllModule;
+
+int InitializeGui(HINSTANCE hInstance, LPARAM param);
 
 const WCHAR* WINAPI ScyllaVersionInformationW() {
   return APPNAME L" " ARCHITECTURE L" " APPVERSION;

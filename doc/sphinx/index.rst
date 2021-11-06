@@ -23,4 +23,5 @@ Main features:
   :caption: API
   :maxdepth: 1
 
+  c/index
   python/index
