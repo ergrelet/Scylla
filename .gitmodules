@@ -6,7 +6,7 @@
 	url = git@github.com:gdabah/distorm.git
 [submodule "thirdparty/WTL"]
 	path = thirdparty/WTL
-	url = git@github.com:Win32-WTL/WTL.git
+	url = git://git.code.sf.net/p/wtl/git
 [submodule "thirdparty/pybind11"]
 	path = thirdparty/pybind11
 	url = git@github.com:pybind/pybind11.git
