@@ -3,8 +3,8 @@ configuration:
   - Release
   - Debug
 platform:
-- x86
-- x64
+  - x86
+  - x64
 
 environment:
   artifact_name: $(APPVEYOR_PROJECT_NAME)-$(APPVEYOR_REPO_COMMIT)-$(PLATFORM)
@@ -45,6 +45,17 @@ environment:
       PYTHON64_INCLUDE: "C:\\Python39-x64\\include"
       PYTHON64_BINARY:  "C:\\Python39-x64\\python.exe"
       PYTHON64_LIBRARY: "C:\\Python39-x64\\libs\\python39.lib"
+
+    # Python 3.10
+    - PYTHON_VERSION:   "3.10"
+      PYTHON32_PATH:    "C:\\Python310"
+      PYTHON32_INCLUDE: "C:\\Python310\\include"
+      PYTHON32_BINARY:  "C:\\Python310\\python.exe"
+      PYTHON32_LIBRARY: "C:\\Python310\\libs\\python310.lib"
+      PYTHON64_PATH:    "C:\\Python310-x64"
+      PYTHON64_INCLUDE: "C:\\Python310-x64\\include"
+      PYTHON64_BINARY:  "C:\\Python310-x64\\python.exe"
+      PYTHON64_LIBRARY: "C:\\Python310-x64\\libs\\python310.lib"
 
 init:
 - git config --global core.autocrlf true
