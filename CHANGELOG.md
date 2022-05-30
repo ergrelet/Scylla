@@ -1,6 +1,10 @@
 Changelog
 ---------
 
+Version 0.11.0
+
+- Update `ScyllaIatFixAutoW` and `ScyllaIatSearch` to allow dumping DLLs
+
 Version 0.10.0
 
 - Update default configuration
