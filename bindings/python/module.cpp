@@ -13,14 +13,15 @@
 namespace py = pybind11;
 
 std::tuple<std::wstring, std::wstring> VersionInfo();
-std::tuple<uintptr_t, uintptr_t> IatSearch(uint32_t pid, uintptr_t search_start,
+std::tuple<uintptr_t, uintptr_t> IatSearch(uint32_t pid, uintptr_t image_base,
+                                           uintptr_t search_start,
                                            bool advanced_search);
 bool DumpPE(uint32_t pid, uintptr_t image_base, uintptr_t entrypoint_addr,
             const std::wstring &output_file,
             std::optional<std::wstring> input_file);
-void IatFix(uint32_t pid, uintptr_t iat_addr, uint32_t iat_size,
-            bool create_new_iat, const std::wstring &file_to_fix,
-            const std::wstring &output_file);
+void IatFix(uint32_t pid, uintptr_t image_base, uintptr_t iat_addr,
+            uint32_t iat_size, bool create_new_iat,
+            const std::wstring &file_to_fix, const std::wstring &output_file);
 bool RebuildPE(const std::wstring &input_file, bool remove_dos_stub,
                bool fix_pe_checksum, bool create_backup);
 
@@ -42,6 +43,8 @@ class ScyllaException : public std::exception {
         throw ScyllaException("IAT not found");
       case SCY_ERROR_PIDNOTFOUND:
         throw ScyllaException("Process ID not found");
+      case SCY_ERROR_MODULENOTFOUND:
+        throw ScyllaException("Module not found");
       case SCY_ERROR_SUCCESS:
         break;
       default:
@@ -69,8 +72,8 @@ PYBIND11_MODULE(pyscylla, m) {
 		:raises ScyllaException: Scylla failed to find an IAT
 		:return: A `Tuple` containing the address and the size of the IAT that's been found
 	)pbdoc",
-        py::arg("pid"), py::arg("search_start_address"),
-        py::arg("advanced_search"));
+        py::arg("pid"), py::arg("image_base_address"),
+        py::arg("search_start_address"), py::arg("advanced_search"));
 
   m.def("dump_pe", &DumpPE, R"pbdoc(
 		Dump a PE loaded in the given process.
@@ -86,9 +89,9 @@ PYBIND11_MODULE(pyscylla, m) {
 
 		:raises ScyllaException: Scylla failed to fix the IAT
     )pbdoc",
-        py::arg("pid"), py::arg("iat_address"), py::arg("iat_size"),
-        py::arg("create_new_iat"), py::arg("input_file_path"),
-        py::arg("output_file_path"));
+        py::arg("pid"), py::arg("image_base_address"), py::arg("iat_address"),
+        py::arg("iat_size"), py::arg("create_new_iat"),
+        py::arg("input_file_path"), py::arg("output_file_path"));
 
   m.def("rebuild_pe", &RebuildPE, R"pbdoc(
 		Apply minor fixes to a PE file.
@@ -136,13 +139,14 @@ std::tuple<std::wstring, std::wstring> VersionInfo() {
 }
 
 // Wrapper for ScyllaIatSearch
-std::tuple<uintptr_t, uintptr_t> IatSearch(uint32_t pid, uintptr_t search_start,
+std::tuple<uintptr_t, uintptr_t> IatSearch(uint32_t pid, uintptr_t image_base,
+                                           uintptr_t search_start,
                                            bool advanced_search) {
   DWORD_PTR iat_start{};
   DWORD iat_size{};
-  const auto res = ScyllaIatSearch(pid, &iat_start, &iat_size,
-                                   static_cast<DWORD_PTR>(search_start),
-                                   WIN_BOOL(advanced_search));
+  const auto res = ScyllaIatSearch(
+      pid, static_cast<DWORD_PTR>(image_base), &iat_start, &iat_size,
+      static_cast<DWORD_PTR>(search_start), WIN_BOOL(advanced_search));
   // Check result
   ScyllaException::ThrowOnError(res);
 
@@ -164,13 +168,13 @@ bool DumpPE(uint32_t pid, uintptr_t image_base, uintptr_t entrypoint_addr,
 }
 
 // Wrapper for ScyllaIatFixAutoW
-void IatFix(uint32_t pid, uintptr_t iat_addr, uint32_t iat_size,
-            bool create_new_iat, const std::wstring &input_file,
-            const std::wstring &output_file) {
+void IatFix(uint32_t pid, uintptr_t image_base, uintptr_t iat_addr,
+            uint32_t iat_size, bool create_new_iat,
+            const std::wstring &input_file, const std::wstring &output_file) {
   const auto res = ScyllaIatFixAutoW(
-      static_cast<DWORD>(pid), static_cast<DWORD_PTR>(iat_addr),
-      static_cast<DWORD>(iat_size), WIN_BOOL(create_new_iat),
-      input_file.c_str(), output_file.c_str());
+      static_cast<DWORD>(pid), static_cast<DWORD_PTR>(image_base),
+      static_cast<DWORD_PTR>(iat_addr), static_cast<DWORD>(iat_size),
+      WIN_BOOL(create_new_iat), input_file.c_str(), output_file.c_str());
   // Check result
   ScyllaException::ThrowOnError(res);
 }

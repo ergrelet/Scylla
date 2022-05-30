@@ -166,9 +166,9 @@ INT WINAPI ScyllaStartGui(DWORD dwProcessId, HINSTANCE mod,
   return InitializeGui(hDllModule, (LPARAM)&guiParam);
 }
 
-int WINAPI ScyllaIatSearch(DWORD dwProcessId, DWORD_PTR* iatStart,
-                           DWORD* iatSize, DWORD_PTR searchStart,
-                           BOOL advancedSearch) {
+int WINAPI ScyllaIatSearch(DWORD dwProcessId, DWORD_PTR imagebase,
+                           DWORD_PTR* iatStart, DWORD* iatSize,
+                           DWORD_PTR searchStart, BOOL advancedSearch) {
   ApiReader apiReader;
   ProcessLister processLister;
   Process* processPtr = 0;
@@ -197,8 +197,21 @@ int WINAPI ScyllaIatSearch(DWORD dwProcessId, DWORD_PTR* iatStart,
                                        ProcessAccessHelp::moduleList);
 
   ProcessAccessHelp::selectedModule = 0;
-  ProcessAccessHelp::targetImageBase = processPtr->imageBase;
-  ProcessAccessHelp::targetSizeOfImage = processPtr->imageSize;
+  if (imagebase == 0 || imagebase == processPtr->imageBase) {
+    ProcessAccessHelp::targetImageBase = processPtr->imageBase;
+    ProcessAccessHelp::targetSizeOfImage = processPtr->imageSize;
+  } else {
+    auto module_it =
+        std::find_if(ProcessAccessHelp::moduleList.cbegin(),
+                     ProcessAccessHelp::moduleList.cend(),
+                     [&](auto& mod) { return mod.modBaseAddr == imagebase; });
+    if (module_it == ProcessAccessHelp::moduleList.cend()) {
+      return SCY_ERROR_MODULENOTFOUND;
+    }
+
+    ProcessAccessHelp::targetImageBase = module_it->modBaseAddr;
+    ProcessAccessHelp::targetSizeOfImage = module_it->modBaseSize;
+  }
 
   apiReader.readApisFromModuleList();
 
@@ -223,9 +236,10 @@ int WINAPI ScyllaIatSearch(DWORD dwProcessId, DWORD_PTR* iatStart,
   return retVal;
 }
 
-int WINAPI ScyllaIatFixAutoW(DWORD dwProcessId, DWORD_PTR iatAddr,
-                             DWORD iatSize, BOOL createNewIat,
-                             const WCHAR* dumpFile, const WCHAR* iatFixFile) {
+int WINAPI ScyllaIatFixAutoW(DWORD dwProcessId, DWORD_PTR imagebase,
+                             DWORD_PTR iatAddr, DWORD iatSize,
+                             BOOL createNewIat, const WCHAR* dumpFile,
+                             const WCHAR* iatFixFile) {
   ApiReader apiReader;
   ProcessLister processLister;
   Process* processPtr = 0;
@@ -254,8 +268,21 @@ int WINAPI ScyllaIatFixAutoW(DWORD dwProcessId, DWORD_PTR iatAddr,
                                        ProcessAccessHelp::moduleList);
 
   ProcessAccessHelp::selectedModule = 0;
-  ProcessAccessHelp::targetImageBase = processPtr->imageBase;
-  ProcessAccessHelp::targetSizeOfImage = processPtr->imageSize;
+  if (imagebase == 0 || imagebase == processPtr->imageBase) {
+    ProcessAccessHelp::targetImageBase = processPtr->imageBase;
+    ProcessAccessHelp::targetSizeOfImage = processPtr->imageSize;
+  } else {
+    auto module_it =
+        std::find_if(ProcessAccessHelp::moduleList.cbegin(),
+                     ProcessAccessHelp::moduleList.cend(),
+                     [&](auto& mod) { return mod.modBaseAddr == imagebase; });
+    if (module_it == ProcessAccessHelp::moduleList.cend()) {
+      return SCY_ERROR_MODULENOTFOUND;
+    }
+
+    ProcessAccessHelp::targetImageBase = module_it->modBaseAddr;
+    ProcessAccessHelp::targetSizeOfImage = module_it->modBaseSize;
+  }
 
   apiReader.readApisFromModuleList();
 
