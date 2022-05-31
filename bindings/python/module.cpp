@@ -16,13 +16,13 @@ std::tuple<std::wstring, std::wstring> VersionInfo();
 std::tuple<uintptr_t, uintptr_t> IatSearch(uint32_t pid, uintptr_t image_base,
                                            uintptr_t search_start,
                                            bool advanced_search);
-bool DumpPE(uint32_t pid, uintptr_t image_base, uintptr_t entrypoint_addr,
+void DumpPE(uint32_t pid, uintptr_t image_base, uintptr_t entrypoint_addr,
             const std::wstring &output_file,
             std::optional<std::wstring> input_file);
 void IatFix(uint32_t pid, uintptr_t image_base, uintptr_t iat_addr,
             uint32_t iat_size, bool create_new_iat,
             const std::wstring &file_to_fix, const std::wstring &output_file);
-bool RebuildPE(const std::wstring &input_file, bool remove_dos_stub,
+void RebuildPE(const std::wstring &input_file, bool remove_dos_stub,
                bool fix_pe_checksum, bool create_backup);
 
 // Custom exception
@@ -78,7 +78,7 @@ PYBIND11_MODULE(pyscylla, m) {
   m.def("dump_pe", &DumpPE, R"pbdoc(
 		Dump a PE loaded in the given process.
 
-		:return: `True` if the function succeeded, `False` otherwise
+		:raises ScyllaException: Scylla failed to dump the target PE
     )pbdoc",
         py::arg("pid"), py::arg("image_base_address"),
         py::arg("entrypoint_address"), py::arg("output_file_path"),
@@ -96,7 +96,7 @@ PYBIND11_MODULE(pyscylla, m) {
   m.def("rebuild_pe", &RebuildPE, R"pbdoc(
 		Apply minor fixes to a PE file.
 
-		:return: `True` if the function succeeded, `False` otherwise
+		:raises ScyllaException: Scylla failed to rebuild the target PE
     )pbdoc",
         py::arg("input_file_path"), py::arg("remove_dos_stub"),
         py::arg("fix_pe_checksum"), py::arg("create_backup"));
@@ -154,17 +154,20 @@ std::tuple<uintptr_t, uintptr_t> IatSearch(uint32_t pid, uintptr_t image_base,
 }
 
 // Wrapper for ScyllaDumpProcessW
-bool DumpPE(uint32_t pid, uintptr_t image_base, uintptr_t entrypoint_addr,
+void DumpPE(uint32_t pid, uintptr_t image_base, uintptr_t entrypoint_addr,
             const std::wstring &output_file,
             std::optional<std::wstring> input_file) {
   const WCHAR *file_to_dump{};
   if (input_file.has_value()) {
     file_to_dump = input_file.value().c_str();
   }
-  return ScyllaDumpProcessW(static_cast<DWORD_PTR>(pid), file_to_dump,
-                            static_cast<DWORD_PTR>(image_base),
-                            static_cast<DWORD_PTR>(entrypoint_addr),
-                            output_file.c_str()) == TRUE;
+  const auto res = ScyllaDumpProcessW(static_cast<DWORD_PTR>(pid), file_to_dump,
+                                      static_cast<DWORD_PTR>(image_base),
+                                      static_cast<DWORD_PTR>(entrypoint_addr),
+                                      output_file.c_str());
+  if (res == FALSE) {
+    throw ScyllaException("ScyllaDumpProcessW failed");
+  }
 }
 
 // Wrapper for ScyllaIatFixAutoW
@@ -180,11 +183,14 @@ void IatFix(uint32_t pid, uintptr_t image_base, uintptr_t iat_addr,
 }
 
 // Wrapper for ScyllaRebuildFileW
-bool RebuildPE(const std::wstring &input_file, bool remove_dos_stub,
+void RebuildPE(const std::wstring &input_file, bool remove_dos_stub,
                bool fix_pe_checksum, bool create_backup) {
-  return ScyllaRebuildFileW(input_file.c_str(), WIN_BOOL(remove_dos_stub),
-                            WIN_BOOL(fix_pe_checksum),
-                            WIN_BOOL(create_backup)) == TRUE;
+  const auto res =
+      ScyllaRebuildFileW(input_file.c_str(), WIN_BOOL(remove_dos_stub),
+                         WIN_BOOL(fix_pe_checksum), WIN_BOOL(create_backup));
+  if (res == FALSE) {
+    throw ScyllaException("ScyllaRebuildFileW failed");
+  }
 }
 
 // Needed by ScyllaLib
