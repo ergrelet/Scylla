@@ -4,6 +4,8 @@ Changelog
 Version 0.11.0
 
 - Update `ScyllaIatFixAutoW` and `ScyllaIatSearch` to allow dumping DLLs
+- `pyscylla.dump_pe` and `pyscylla.rebuild_pe` now return None and throw
+  exceptions on failure
 
 Version 0.10.0
 
