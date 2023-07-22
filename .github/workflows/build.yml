@@ -33,7 +33,7 @@ jobs:
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: scylla_${{ matrix.architecture }}
+          name: scylla_${{ matrix.architecture }}_${{ matrix.build_type }}
           path: |
             .\build\src\${{ matrix.build_type }}\Scylla.dll
             .\build\src\${{ matrix.build_type }}\ScyllaExe.exe
