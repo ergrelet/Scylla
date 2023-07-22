@@ -4,7 +4,9 @@ add_library(distorm STATIC ${DISTORM_SRC_FILES})
 target_include_directories(distorm PUBLIC "distorm/include")
 
 # pybind11
-add_subdirectory("pybind11")
+if (SCYLLA_PYTHON)
+    add_subdirectory("pybind11")
+endif (SCYLLA_PYTHON)
 
 # tinyxml
 file(GLOB TINYXML_SRC_FILES "tinyxml/*.h" "tinyxml/*.cpp")
