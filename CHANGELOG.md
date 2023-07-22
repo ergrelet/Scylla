@@ -1,5 +1,9 @@
-Changelog
----------
+## Changelog
+
+Version 0.11.1
+
+- Fix `readMemoryFromProcess` to only reprotect to `PAGE_READONLY`
+- Generate Python bindings for Python 3.11
 
 Version 0.11.0
 
@@ -51,7 +55,7 @@ Version 0.9.4 Final
 
 - direct import scanner (LEA, MOV, PUSH, CALL, JMP) + fixer with 2 fix methods
 - create new iat in section
-- fixed various bugs 
+- fixed various bugs
 
 Version 0.9.3
 
@@ -81,7 +85,7 @@ Version 0.8
 
 - added OriginalFirstThunk support. Thanks to p0c
 - fixed malformed dos header bug
-- NtCreateThreadEx added infos from waliedassar, thanks! 
+- NtCreateThreadEx added infos from waliedassar, thanks!
 
 Version 0.7 Beta
 
@@ -128,16 +132,16 @@ Version 0.5:
 
 Version 0.4:
 
- - GUI code improvements
- - bug fixes
- - imports by ordinal
+- GUI code improvements
+- bug fixes
+- imports by ordinal
 
 Version 0.3a:
 
- - Improved import resolving
- - fixed buffer overflow errors
+- Improved import resolving
+- fixed buffer overflow errors
 
 Version 0.3:
 
- - ImpREC plugin support
- - minor bug fix
+- ImpREC plugin support
+- minor bug fix
