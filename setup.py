@@ -122,7 +122,7 @@ setup(
     version="0.11.1",
     author="Erwan Grelet",
     description="Python bindings for Scylla",
-    long_description="",
+    long_description="Python bindings for Scylla",
     ext_modules=[CMakeExtension("pyscylla")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
