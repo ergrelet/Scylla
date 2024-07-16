@@ -1,5 +1,9 @@
 ## Changelog
 
+Version 0.11.2
+
+- Generate Python bindings for Python 3.12
+
 Version 0.11.1
 
 - Fix `readMemoryFromProcess` to only reprotect to `PAGE_READONLY`
