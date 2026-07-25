@@ -16,12 +16,24 @@ std::tuple<std::wstring, std::wstring> VersionInfo();
 std::tuple<uintptr_t, uintptr_t> IatSearch(uint32_t pid, uintptr_t image_base,
                                            uintptr_t search_start,
                                            bool advanced_search);
+std::tuple<uintptr_t, uintptr_t> IatSearchManual(uint32_t pid, uintptr_t image_base,
+                                                  uintptr_t image_size,
+                                                  uintptr_t search_start,
+                                                  bool advanced_search);
 void DumpPE(uint32_t pid, uintptr_t image_base, uintptr_t entrypoint_addr,
             const std::wstring &output_file,
             std::optional<std::wstring> input_file);
 void IatFix(uint32_t pid, uintptr_t image_base, uintptr_t iat_addr,
             uint32_t iat_size, bool create_new_iat,
             const std::wstring &file_to_fix, const std::wstring &output_file);
+void IatFixManual(uint32_t pid,
+                  uintptr_t image_base,
+                  uintptr_t image_size,
+                  uintptr_t iat_addr,
+                  uint32_t iat_size,
+                  bool create_new_iat,
+                  const std::wstring &dump_file,
+                  const std::wstring &fixed_file);
 void RebuildPE(const std::wstring &input_file, bool remove_dos_stub,
                bool fix_pe_checksum, bool create_backup);
 
@@ -75,6 +87,16 @@ PYBIND11_MODULE(pyscylla, m) {
         py::arg("pid"), py::arg("image_base_address"),
         py::arg("search_start_address"), py::arg("advanced_search"));
 
+  m.def("search_iat_manual", &IatSearchManual, R"pbdoc(
+    Allows searching for an IAT at any arbitrary address in the process that may not be in a module.
+
+    :raises ScyllaException: Scylla failed to find an IAT
+    :return: A tuple containing the address and the size of the IAT that's been found
+  )pbdoc",
+      py::arg("pid"), py::arg("image_base_address"),
+      py::arg("image_size"),
+      py::arg("search_start_address"), py::arg("advanced_search"));
+
   m.def("dump_pe", &DumpPE, R"pbdoc(
 		Dump a PE loaded in the given process.
 
@@ -92,6 +114,20 @@ PYBIND11_MODULE(pyscylla, m) {
         py::arg("pid"), py::arg("image_base_address"), py::arg("iat_address"),
         py::arg("iat_size"), py::arg("create_new_iat"),
         py::arg("input_file_path"), py::arg("output_file_path"));
+
+  m.def("fix_iat_manual", &IatFixManual, R"pbdoc(
+    Fix the import table of a manually mapped PE previously dumped with Scylla.
+
+    :raises ScyllaException: Scylla failed to fix the IAT
+  )pbdoc",
+      py::arg("pid"),
+      py::arg("image_base_address"),
+      py::arg("image_size"),
+      py::arg("iat_address"),
+      py::arg("iat_size"),
+      py::arg("create_new_iat"),
+      py::arg("input_file_path"),
+      py::arg("output_file_path"));
 
   m.def("rebuild_pe", &RebuildPE, R"pbdoc(
 		Apply minor fixes to a PE file.
@@ -151,6 +187,47 @@ std::tuple<uintptr_t, uintptr_t> IatSearch(uint32_t pid, uintptr_t image_base,
   ScyllaException::ThrowOnError(res);
 
   return std::make_tuple(iat_start, iat_size);
+}
+
+
+std::tuple<uintptr_t, uintptr_t> IatSearchManual(uint32_t pid, uintptr_t image_base,
+                                                  uintptr_t image_size,
+                                                  uintptr_t search_start,
+                                                  bool advanced_search) {
+  DWORD_PTR iat_start{};
+  DWORD iat_size{};
+  const auto res = ScyllaIatSearchManual(
+      pid, static_cast<DWORD_PTR>(image_base),
+      static_cast<DWORD_PTR>(image_size),
+      &iat_start, &iat_size,
+      static_cast<DWORD_PTR>(search_start),
+      WIN_BOOL(advanced_search));
+  ScyllaException::ThrowOnError(res);
+  return std::make_tuple(iat_start, iat_size);
+}
+
+// Wrapper for IatFixManual
+void IatFixManual(uint32_t pid,
+                  uintptr_t image_base,
+                  uintptr_t image_size,
+                  uintptr_t iat_addr,
+                  uint32_t iat_size,
+                  bool create_new_iat,
+                  const std::wstring &dump_file,
+                  const std::wstring &fixed_file)
+{
+  const auto res = ScyllaIatFixManualW(
+      static_cast<DWORD>(pid),
+      static_cast<DWORD_PTR>(image_base),
+      static_cast<DWORD_PTR>(image_size),
+      static_cast<DWORD_PTR>(iat_addr),
+      static_cast<DWORD>(iat_size),
+      WIN_BOOL(create_new_iat),
+      dump_file.c_str(),
+      fixed_file.c_str()
+  );
+  // Raise an exception in Python if something fails
+  ScyllaException::ThrowOnError(res);
 }
 
 // Wrapper for ScyllaDumpProcessW

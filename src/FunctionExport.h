@@ -45,7 +45,20 @@ INT WINAPI ScyllaStartGui(DWORD dwProcessId, HINSTANCE mod,
 int WINAPI ScyllaIatSearch(DWORD dwProcessId, DWORD_PTR imagebase,
                            DWORD_PTR* iatStart, DWORD* iatSize,
                            DWORD_PTR searchStart, BOOL advancedSearch);
+int WINAPI ScyllaIatSearchManual(DWORD dwProcessId, DWORD_PTR imagebase, DWORD_PTR imageSize,
+                                 DWORD_PTR* iatStart, DWORD* iatSize,
+                                 DWORD_PTR searchStart, BOOL advancedSearch);
 int WINAPI ScyllaIatFixAutoW(DWORD dwProcessId, DWORD_PTR imagebase,
                              DWORD_PTR iatAddr, DWORD iatSize,
                              BOOL createNewIat, const WCHAR* dumpFile,
                              const WCHAR* iatFixFile);
+int WINAPI ScyllaIatFixManualW(
+    DWORD dwProcessId,
+    DWORD_PTR imagebase,
+    DWORD_PTR imageSize,
+    DWORD_PTR iatAddr,
+    DWORD iatSize,
+    BOOL createNewIat,
+    const WCHAR* dumpFile,
+    const WCHAR* iatFixFile
+);
