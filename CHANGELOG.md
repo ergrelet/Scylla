@@ -1,5 +1,12 @@
 ## Changelog
 
+Version 0.12.0
+
+- Add new `ScyllaIatSearchManual` and `ScyllaIatFixManualW` APIs which are
+  `ScyllaIatSearch` and `ScyllaIatFixAutoW` variants offering more control to
+  callers
+- Generate Python bindings for Python 3.11 and all versions up to version 3.14
+
 Version 0.11.2
 
 - Generate Python bindings for Python 3.12
