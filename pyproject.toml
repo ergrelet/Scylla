@@ -1,9 +1,35 @@
 [project]
+name = "pyscylla"
+version = "0.11.2"
+authors = [
+    { name = "Erwan Grelet" }
+]
+description = "Python bindings for Scylla"
+readme = "README.md"
+license = "GPL-3.0-only"
+license-files = ["LICENSE"]
 requires-python = ">=3.11"
+
+# Optional but recommended
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
+
+[project.optional-dependencies]
+test = []
+
+[project.urls]
+Homepage = "https://github.com/ergrelet/Scylla"
+Repository = "https://github.com/ergrelet/Scylla"
+Issues = "https://github.com/ergrelet/Scylla/issues"
 
 [build-system]
 requires = [
-    "setuptools>=42",
+    "setuptools>=69",
     "wheel",
     "ninja; sys_platform != 'win32' and platform_machine != 'arm64'",
     "cmake>=3.12",
@@ -12,3 +38,6 @@ build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
 build = "cp3{11,12,13,14}-*"
+
+[tool.cibuildwheel.windows]
+archs = ["AMD64"]

@@ -118,13 +118,7 @@ class CMakeBuild(build_ext):
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
-    name="pyscylla",
-    version="0.11.2",
-    author="Erwan Grelet",
-    description="Python bindings for Scylla",
-    long_description="Python bindings for Scylla",
     ext_modules=[CMakeExtension("pyscylla")],
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
-    extras_require={"test": []},
 )
