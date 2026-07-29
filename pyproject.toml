@@ -1,3 +1,6 @@
+[project]
+requires-python = ">=3.11"
+
 [build-system]
 requires = [
     "setuptools>=42",
@@ -6,3 +9,6 @@ requires = [
     "cmake>=3.12",
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+build = "cp3{11,12,13,14}-*"
