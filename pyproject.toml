@@ -40,4 +40,4 @@ build-backend = "setuptools.build_meta"
 build = "cp3{11,12,13,14}-*"
 
 [tool.cibuildwheel.windows]
-archs = ["AMD64"]
+archs = ["AMD64", "x86"]
